@@ -5,6 +5,7 @@ class ProgressBar {
 
         this.circleElement = progressElement.querySelector('.progress-circle');
         this.fillElement = progressElement.querySelector('.progress-circle__foreground');
+        this.inputElement = controlsElement.querySelector('.progress-input');
 
         this.radius = 50;
         this.circleLength = 2 * Math.PI * this.radius;
@@ -14,18 +15,27 @@ class ProgressBar {
         this.controlsElement.addEventListener('input', (e) => this.onInputChange(e));
         this.controlsElement.addEventListener('change', (e) => this.onControlChange(e));
 
-        this.setProgress(controlsElement.querySelector('.progress-input').value);
+        this.setProgress(this.inputElement.value);
     }
 
     setProgress(progressValue) {
         const clampedValue = Math.max(0, Math.min(100, progressValue));
         const dashOffset = this.circleLength - (clampedValue / 100) * this.circleLength;
         this.fillElement.style.strokeDashoffset = dashOffset;
+        this.inputElement.value = clampedValue;
+    }
+
+    validateInput() {
+        let value = parseFloat(this.inputElement.value);
+        if (isNaN(value)) {
+            value = 0;
+        }
+        this.setProgress(value);
     }
 
     onInputChange(event) {
         if (event.target.classList.contains('progress-input')) {
-            this.setProgress(event.target.value);
+            this.validateInput();
         }
     }
 
